@@ -5,6 +5,7 @@
 .env.local
 .env.production
 
+
 # Dependencies
 node_modules/
 __pycache__/
@@ -64,3 +65,8 @@ coverage.xml
 .mypy_cache/
 .dmypy.json
 dmyp.json
+
+
+# Exclude specific files
+projet_strtred.txt
+text.txt
