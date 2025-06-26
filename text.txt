@@ -1,0 +1,146 @@
+📋 Complete Setup Instructions - Phase 1
+Step 1: Create Project Structure
+bash# Create main project directory
+mkdir gmaps-scraper-python
+cd gmaps-scraper-python
+
+# Create all subdirectories
+mkdir -p config
+mkdir -p src/models
+mkdir -p src/utils
+mkdir -p src/scraper
+mkdir -p data/output/csv
+mkdir -p data/output/json
+mkdir -p data/output/excel
+mkdir -p data/logs
+mkdir -p data/proxies
+mkdir -p tests
+
+# Create __init__.py files
+touch config/__init__.py
+touch src/__init__.py
+touch src/models/__init__.py
+touch src/utils/__init__.py
+touch src/scraper/__init__.py
+touch tests/__init__.py
+Step 2: Create All Files
+Create each file from the codebase above:
+
+requirements.txt - Copy the dependencies
+.env.example - Copy the environment template
+config/settings.py - Copy the settings configuration
+config/selectors.py - Copy the CSS selectors
+src/models/business.py - Copy the business data model
+src/utils/logger.py - Copy the logging utility
+src/utils/file_handler.py - Copy the file handling utility
+src/utils/rate_limiter.py - Copy the rate limiting utility
+main.py - Copy the main entry point
+setup.py - Copy the package setup
+
+Step 3: Set Up Python Environment
+bash# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# On Windows:
+venv\Scripts\activate
+# On Mac/Linux:
+source venv/bin/activate
+
+# Upgrade pip
+python -m pip install --upgrade pip
+
+# Install dependencies
+pip install -r requirements.txt
+Step 4: Configure Environment
+bash# Copy environment template
+cp .env.example .env
+
+# Edit .env file with your preferences
+# You can use any text editor
+nano .env  # or vim .env or code .env
+Important .env settings for testing:
+envHEADLESS_MODE=false          # Set to false to see browser
+DEBUG_MODE=true              # Enable debug logging
+MAX_BUSINESSES=10            # Start with small number for testing
+SCROLL_PAUSE_TIME=3          # Slower for testing
+CLICK_DELAY=2                # Slower for testing
+Step 5: Test the Setup
+bash# Test the basic setup
+python main.py --search "restaurants in kolkata" --max-results 5
+
+# You should see colored output like:
+# 🚀 Starting Google Maps Scraper
+# Search Query: restaurants in kolkata
+# Max Results: 5
+# ✅ Phase 1 setup completed successfully!
+Step 6: Verify Directory Structure
+Your final directory should look like this:
+gmaps-scraper-python/
+├── venv/                    # Virtual environment
+├── config/
+│   ├── __init__.py         ✅
+│   ├── settings.py         ✅
+│   └── selectors.py        ✅
+├── src/
+│   ├── __init__.py         ✅
+│   ├── models/
+│   │   ├── __init__.py     ✅
+│   │   └── business.py     ✅
+│   └── utils/
+│       ├── __init__.py     ✅
+│       ├── logger.py       ✅
+│       ├── file_handler.py ✅
+│       └── rate_limiter.py ✅
+├── data/
+│   ├── output/
+│   │   ├── csv/            ✅
+│   │   ├── json/           ✅
+│   │   └── excel/          ✅
+│   └── logs/               ✅
+├── requirements.txt        ✅
+├── .env                    ✅
+├── .env.example           ✅
+├── main.py                ✅
+└── setup.py               ✅
+Step 7: Test Individual Components
+bash# Test logger
+python -c "from src.utils.logger import setup_logger; logger = setup_logger(); logger.info('Test successful!')"
+
+# Test file handler
+python -c "from src.utils.file_handler import FileHandler; fh = FileHandler(); print('File handler works!')"
+
+# Test business model
+python -c "from src.models.business import Business; b = Business('Test Business'); print(b)"
+🔍 What Phase 1 Provides:
+✅ Completed Features:
+
+Complete project structure - All directories and files organized
+Configuration management - Environment-based settings
+Logging system - Colored console output + file logging
+Data models - Business class for structured data
+File handling - CSV, JSON, Excel export capabilities
+Rate limiting - Basic request timing control
+Command-line interface - Argument parsing ready
+
+📊 Test Results:
+
+Green checkmarks ✅ mean component works
+Colored logs show system is working
+File creation in data/logs/ confirms logging works
+
+🚀 Ready for Phase 2:
+Phase 1 creates the foundation. You now have:
+
+✅ All utilities working
+✅ Project structure complete
+✅ Environment configured
+✅ Dependencies installed
+✅ Basic CLI ready
+
+Phase 2 will add:
+
+🔄 Browser automation (Selenium)
+🔄 Google Maps navigation
+🔄 Data extraction logic
+🔄 Anti-detection measures

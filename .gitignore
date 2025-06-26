@@ -1,0 +1,66 @@
+
+# ==================== .gitignore ====================
+# Environment files - NEVER commit these
+.env
+.env.local
+.env.production
+
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+env/
+ENV/
+
+# Output files
+data/output/*.csv
+data/output/*.json
+data/output/*.xlsx
+data/logs/*.log
+
+# Screenshots
+data/screenshots/*.png
+data/screenshots/*.jpg
+
+# Browser data
+.browser_data/
+*.crx
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Proxy lists (keep example only)
+data/proxies/proxy_list.txt
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# pytest
+.pytest_cache/
+.cache
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmyp.json
