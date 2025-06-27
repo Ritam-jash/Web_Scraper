@@ -1,4 +1,3 @@
-
 # ==================== src/scraper/browser_manager.py ====================
 import os
 import random
@@ -12,7 +11,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
-from webdriver_manager.chrome import ChromeDriverManager
 from fake_useragent import UserAgent
 
 from config.settings import Settings
@@ -93,7 +91,9 @@ class BrowserManager:
     def create_driver(self) -> webdriver.Chrome:
         """Create and configure Chrome driver"""
         try:
-            service = Service(ChromeDriverManager().install())
+            # Set your chromedriver.exe path here
+            chromedriver_path = 'C:/Tools/chromedriver-win64/chromedriver.exe'  # <-- Update this path as needed
+            service = Service(chromedriver_path)
             options = self.get_chrome_options()
             
             driver = webdriver.Chrome(service=service, options=options)

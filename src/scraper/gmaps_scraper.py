@@ -98,10 +98,6 @@ class GMapsScraper:
             
             logger.info("✅ Google Maps loaded successfully")
             
-            # Take screenshot if enabled
-            if getattr(Settings, 'SAVE_SCREENSHOTS', False):
-                self._take_screenshot("01_google_maps_loaded")
-            
         except TimeoutException:
             logger.error("❌ Timeout waiting for Google Maps to load")
             raise
@@ -136,10 +132,6 @@ class GMapsScraper:
             
             logger.info("✅ Search completed successfully")
             
-            # Take screenshot if enabled
-            if getattr(Settings, 'SAVE_SCREENSHOTS', False):
-                self._take_screenshot("02_search_results")
-            
         except Exception as e:
             logger.error(f"❌ Error performing search: {e}")
             raise
@@ -150,7 +142,7 @@ class GMapsScraper:
         
         business_links = []
         scroll_attempts = 0
-        max_scroll_attempts = 50
+        max_scroll_attempts = 200
         no_new_results_count = 0
         
         try:
@@ -185,6 +177,9 @@ class GMapsScraper:
                 
                 # Scroll to load more results
                 self._scroll_results_panel()
+                
+                # Try clicking 'Next' or 'More results' button if present
+                self._click_next_or_more_results_button()
                 
                 # Rate limiting
                 self.rate_limiter.wait(Settings.SCROLL_PAUSE_TIME)
@@ -276,12 +271,21 @@ class GMapsScraper:
         for i, link in enumerate(business_links, 1):
             try:
                 logger.info(f"📊 Processing business {i}/{len(business_links)}")
+                start_time = time.time()  # Start timing
                 
                 # Navigate to business page
                 self.driver.get(link)
                 
-                # Wait for page to load
-                time.sleep(random.uniform(2, 4))
+                # Use WebDriverWait for the first business, sleep for others
+                if i == 1:
+                    try:
+                        WebDriverWait(self.driver, 10).until(
+                            EC.presence_of_element_located((By.CSS_SELECTOR, "button[data-item-id*='phone'], .rogA2c[data-item-id*='phone'], button[aria-label*='phone'] .Io6YTe, span[role='text'][aria-label*='phone']"))
+                        )
+                    except Exception as e:
+                        logger.warning(f"Phone number element not found for first business: {e}")
+                else:
+                    time.sleep(random.uniform(2, 4))
                 
                 # Extract business data
                 business = self.data_extractor.extract_business_data(search_query)
@@ -297,10 +301,14 @@ class GMapsScraper:
                 # Rate limiting
                 self.rate_limiter.wait()
                 
-                # Take screenshot if enabled (for first few businesses)
-                if getattr(Settings, 'SAVE_SCREENSHOTS', False) and i <= 3:
-                    self._take_screenshot(f"business_{i:03d}")
+                # If this is the last business, add a short delay to ensure all data is loaded and written
+                if i == len(business_links):
+                    time.sleep(2)
                 
+                # Log time taken for this business
+                end_time = time.time()
+                duration = end_time - start_time
+                logger.info(f"⏱️ Time taken for business {i}: {duration:.2f} seconds")
             except Exception as e:
                 logger.error(f"❌ Error processing business {i}: {e}")
                 self.failed_businesses.append(link)
@@ -345,20 +353,6 @@ class GMapsScraper:
         logger.info(f"📈 Success rate: {len(self.scraped_businesses)/(len(self.scraped_businesses)+len(self.failed_businesses))*100:.1f}%")
         logger.info("="*50)
     
-    def _take_screenshot(self, name: str):
-        """Take screenshot for debugging"""
-        try:
-            import os
-            screenshot_dir = getattr(Settings, 'SCREENSHOTS_DIR', 'data/screenshots')
-            os.makedirs(screenshot_dir, exist_ok=True)
-            
-            filepath = os.path.join(screenshot_dir, f"{name}.png")
-            self.driver.save_screenshot(filepath)
-            logger.debug(f"Screenshot saved: {filepath}")
-            
-        except Exception as e:
-            logger.debug(f"Error taking screenshot: {e}")
-    
     def _cleanup(self):
         """Clean up resources"""
         logger.info("🧹 Cleaning up...")
@@ -367,3 +361,30 @@ class GMapsScraper:
             self.browser_manager.close_browser()
         
         logger.info("✅ Cleanup completed")
+
+    def _click_next_or_more_results_button(self):
+        """Try to click 'Next' or 'More results' button if present to load more listings"""
+        try:
+            # Common selectors for next/more results buttons
+            button_selectors = [
+                "button[aria-label=' Next page '], button[aria-label='Next page']",  # Next page button
+                "button[aria-label*='More results']",  # More results button
+                "button[jsaction*='pane.paginationSection.nextPage']",  # Pagination next
+                "div[role='button'][aria-label*='Next']",  # Generic next button
+                "span:contains('Next'), span:contains('More results')"  # Fallback
+            ]
+            for selector in button_selectors:
+                try:
+                    elements = self.driver.find_elements(By.CSS_SELECTOR, selector)
+                    for element in elements:
+                        if element.is_displayed() and element.is_enabled():
+                            element.click()
+                            logger.info("Clicked 'Next' or 'More results' button.")
+                            time.sleep(2)  # Wait for new results to load
+                            return True
+                except Exception as e:
+                    logger.debug(f"Error trying selector {selector} for next/more results: {e}")
+            return False
+        except Exception as e:
+            logger.debug(f"Error clicking next/more results button: {e}")
+            return False

@@ -1,3 +1,30 @@
+Important Settings to Modify:
+For Beginners (Safe Settings):
+envHEADLESS_MODE=false          # See what's happening
+DEBUG_MODE=true              # Detailed logs
+MAX_BUSINESSES=20            # Small test runs
+SCROLL_PAUSE_TIME=3          # Slower = more stable
+CLICK_DELAY=2                # Avoid detection
+For Experienced Users (Faster):
+envHEADLESS_MODE=true           # Faster execution
+DEBUG_MODE=false             # Less logging
+MAX_BUSINESSES=500           # Larger batches
+SCROLL_PAUSE_TIME=1          # Faster scrolling
+CLICK_DELAY=0.5              # Faster clicking
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 📋 Complete Setup Instructions - Phase 1
 Step 1: Create Project Structure
 bash# Create main project directory

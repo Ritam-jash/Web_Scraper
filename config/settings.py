@@ -29,7 +29,7 @@ class Settings:
     
     # Debug Settings
     DEBUG_MODE = os.getenv('DEBUG_MODE', 'True').lower() == 'true'
-    SAVE_SCREENSHOTS = os.getenv('SAVE_SCREENSHOTS', 'True').lower() == 'true'
+    SAVE_SCREENSHOTS = False  # Disabled by default for performance
     
     # Google Maps URLs and Selectors
     GOOGLE_MAPS_URL = "https://www.google.com/maps"

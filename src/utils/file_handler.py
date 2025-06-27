@@ -39,6 +39,15 @@ class FileHandler:
         
         return filename
     
+    def clean_field(self, value):
+        if value is None:
+            return ""
+        # Remove problematic characters (like the Google Maps icon)
+        value = str(value).replace('', '').replace('\n', ' ').replace('\r', ' ')
+        # Optionally, remove other non-printable/control characters
+        value = ''.join(c for c in value if c.isprintable())
+        return value
+    
     def save_to_csv(self, businesses: List[Dict[str, Any]], search_query: str) -> str:
         """Save businesses data to CSV file"""
         if not businesses:
@@ -49,8 +58,13 @@ class FileHandler:
         filepath = os.path.join(self.output_dir, "csv", filename)
         
         try:
-            df = pd.DataFrame(businesses)
-            df.to_csv(filepath, index=False, encoding='utf-8')
+            # Clean all fields in all business records
+            cleaned_businesses = [
+                {k: self.clean_field(v) for k, v in business.items()}
+                for business in businesses
+            ]
+            df = pd.DataFrame(cleaned_businesses)
+            df.to_csv(filepath, index=False, encoding='utf-8', quoting=csv.QUOTE_MINIMAL)
             logger.info(f"Saved {len(businesses)} businesses to CSV: {filepath}")
             return filepath
         
